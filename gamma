@@ -1,0 +1,119 @@
+function varargout = zabawa(varargin)
+
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @zabawa_OpeningFcn, ...
+                   'gui_OutputFcn',  @zabawa_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+
+function zabawa_OpeningFcn(hObject, eventdata, handles, varargin)
+handles.output = hObject;
+guidata(hObject, handles);
+
+function varargout = zabawa_OutputFcn(hObject, eventdata, handles) 
+varargout{1} = handles.output;
+
+function muz_seg=inputdlg();
+muza=wavread('C:\Users\Piotr\Downloads\eit\win');
+t=length(muza)/44100;
+muz_seg=muza(10*44100 : 20*44100);
+
+function ppol=slider1_Callback(hObject, eventdata, handles); 
+stop(p)
+result (handles);
+
+function slider1_CreateFcn(hObject, eventdata, handles)
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+function slider2_Callback(hObject, eventdata, handles);
+result (handles);
+
+function slider2_CreateFcn(hObject, eventdata, handles);
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+function slider3_Callback(hObject, eventdata, handles)
+result (handles);
+
+function slider3_CreateFcn(hObject, eventdata, handles)
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+function slider4_Callback(hObject, eventdata, handles);
+result (handles);
+
+function slider4_CreateFcn(hObject, eventdata, handles)
+
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+function slider5_Callback(hObject, eventdata, handles);
+result (handles);
+
+
+function slider5_CreateFcn(hObject, eventdata, handles)
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+function result (handles)
+muz_seg=inputdlg();
+ppol = get(handles.slider1,'Value')
+ N=10;
+ teta=0.02;
+ [Z1,Z2]=butter(N,teta,'low');
+fil1=(ppol*filter(Z1,Z2,muz_seg));
+%  set(handles.text1,'String', num2str(ppol)); 
+dpol= get(handles.slider2, 'Value')
+N=10;
+ teta=0.1;
+ [Z1,Z2]=butter(N,teta,'low');
+fil2=dpol*filter(Z1,Z2,muz_seg);
+ % set(handles.text2,'String', num2str(dpol)); 
+tpol = get(handles.slider3, 'Value')
+ N=10;
+ teta=0.2;
+ [Z1,Z2]=butter(N,teta,'low');
+fil3=tpol*filter(Z1,Z2,muz_seg);
+ % set(handles.text3,'String', num2str(tpol)); 
+czpol = get(handles.slider4, 'Value')
+ N=10;
+ teta=0.5;
+ [Z1,Z2]=butter(N,teta,'low');
+fil4=czpol*filter(Z1,Z2,muz_seg);
+%  set(handles.text4,'String', num2str(czpol)); 
+piapol= get(handles.slider5, 'Value')
+N=10;
+ teta=0.9;
+ [Z1,Z2]=butter(N,teta,'low');
+fil5=piapol*filter(Z1,Z2,muz_seg);
+%  set(handles.text5,'String', num2str(piapol)); 
+odtworz=(fil1+fil2+fil3+fil4)/8;
+
+if(piapol==15)
+p = audioplayer(odtworz, 44100);
+        playblocking(p)     
+        if(piapol~=15)
+        stop(p)
+    end
+end
+
+%trzeba doożyć filtr pasmowo przepustowy, żeby nie zmieniać tety, tylko wzmocnienia filtrów
+%pomyslec nad tym by to sie dziao w czasie rzeczywistym
+%mozna dopisac bajer w stylu "podaj sciezke do pliku, zatrzymaj, wznów itp"
